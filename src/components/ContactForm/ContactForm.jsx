@@ -8,7 +8,6 @@ export const ContactForm = () => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
 
-    const dispatch = useDispatch();
     const contacts = useSelector(selectContacts);
 
     const handleChange = e => {
@@ -28,18 +27,27 @@ export const ContactForm = () => {
         }
       };
 
-      const handleSubmit = e => {
-        e.preventDefault();
-        const enterContacts = contacts.some(
-          contact => contact.name.toLowerCase() === name.toLowerCase() || contact.phone === phone
+      const dispatch = useDispatch();
+
+      const handleSubmit = event => {
+        event.preventDefault();
+        const isNameAdded = contacts.some(
+          contact => contact.name.toLowerCase() === name.toLowerCase()
         );
-        enterContacts
-          ? alert(`${name} or ${phone} is already in contacts`)
-          : dispatch(addContact(name, phone));
-        resetForm();
-      };
-      
-      const resetForm = () => {
+        const isPhoneAdded = contacts.some(contact => contact.phone === phone);
+    
+        if (isNameAdded) {
+          alert(`${name} is alredy in contacts`);
+          return;
+        } else if (isPhoneAdded) {
+          alert(`${phone} is alredy in contacts`);
+          return;
+        }
+    
+        const newContact = addContact({ name, phone });
+    
+        dispatch(newContact);
+    
         setName('');
         setPhone('');
       };
